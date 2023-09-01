@@ -24,23 +24,23 @@
 
         <ImageView
             android:id="@+id/imageOfFunctionView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="15"
             app:srcCompat="@drawable/ic_launcher_foreground" />
 
         <TextView
             android:id="@+id/nameOfFunctionView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight=".0005"
             android:text="nameOfFunction" />
 
         <Button
             android:id="@+id/turnFunctionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.2"
             android:text="@string/turnOff"
             android:textSize="10sp" />
     </LinearLayout>

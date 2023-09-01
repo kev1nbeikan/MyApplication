@@ -52,8 +52,6 @@ class MainActivity : AppCompatActivity() {
         when(nameId) {
 
             R.string.flashLight -> button.setOnClickListener {
-                Log.d("setItemClickListenerByName", "setListiner")
-
                 if (flashLight.getTurnStatus()) {
                     flashLight.turnOff()
                 } else {
