@@ -10,52 +10,56 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import com.example.myapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var turnFunctionButton: Button
+    private lateinit var imageOfFunctionView: ImageView;
+    private lateinit var nameOFFunctionView: TextView;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        bindAll()
+
         setContentView(binding.root)
 
-        Log.d("TAG", "HelloWord");
+        setDefaultFunction();
+    }
 
-        setSupportActionBar(binding.toolbar)
+    private fun setDefaultFunction() {
+        setFunctionToViews(
+            nameId = R.string.flashLight,
+            imageId = R.mipmap.flashlight
+        );
+    }
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+    private fun setFunctionToViews(nameId: Int, imageId: Int) {
+        nameOFFunctionView.setText(nameId)
+        imageOfFunctionView.setImageResource(imageId)
+        setItemClickListenerByName()
+    }
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+    private fun setItemClickListenerByName(turnFunctionButton: Button, nameId: Int) {
+        when(nameId) {
+            R.string.flashLight -> turnFunctionButton.setOnClickListener {
+
+            }
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+
+
+    private fun bindAll() {
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        turnFunctionButton = binding.turnFunctionButton
+        imageOfFunctionView = binding.imageOfFunctionView
+        nameOFFunctionView = binding.nameOfFunctionView
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
 }
