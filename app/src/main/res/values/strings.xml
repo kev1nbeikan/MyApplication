@@ -12,4 +12,5 @@
     <string name="turnOff">Выключить</string>
     <string name="turnOn">Включить</string>
     <string name="flashLight">фонарик</string>
+    <string name="bluetooth">блетуз</string>
 </resources>
