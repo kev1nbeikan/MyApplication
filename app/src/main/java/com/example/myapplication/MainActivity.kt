@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var permissionLauncher: ActivityResultLauncher<String>
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -121,7 +120,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

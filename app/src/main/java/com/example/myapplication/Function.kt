@@ -1,12 +1,15 @@
 package com.example.myapplication
 
 import android.app.Application
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.FanctionItemBinding
 
 data class Function(val imageId: Int, val nameId: Int)
+
+
 
 class FunctionAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter<FunctionAdapter.FunctionVeiwHolder>() {
     var data: List<Function> = emptyList()

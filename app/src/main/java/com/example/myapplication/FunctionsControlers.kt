@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import android.net.wifi.WifiManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
 
@@ -15,6 +16,9 @@ interface FunctionController {
     fun getTurnStatus(): Boolean
     fun turnOff(): Boolean
     fun turnOn(): Boolean
+
+
+
 }
 
 
@@ -32,6 +36,7 @@ class Bluetooth(context: Context) : FunctionController {
         Manifest.permission.BLUETOOTH_CONNECT,
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.BLUETOOTH_ADMIN,
     )
 
     init {
@@ -72,7 +77,7 @@ class Bluetooth(context: Context) : FunctionController {
         return if (checkBluetoothPermissions()) {
             if (bluetoothManager.adapter.isDiscovering) {
                 Log.d("Bluetooth", "cancelDiscovering")
-                bluetoothManager.adapter.cancelDiscovery()
+                bluetoothManager.adapter.startDiscovery()
                 isTurn = false
             }
             true
@@ -166,7 +171,7 @@ class FlashLight(context: Context) : FunctionController {
         return false
     }
 
-
 }
+
 
 
