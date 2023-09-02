@@ -8,7 +8,7 @@ import com.example.myapplication.databinding.FanctionItemBinding
 
 data class Function(val imageId: Int, val nameId: Int)
 
-class FunctionAdapter : RecyclerView.Adapter<FunctionAdapter.FunctionVeiwHolder>() {
+class FunctionAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter<FunctionAdapter.FunctionVeiwHolder>() {
     var data: List<Function> = emptyList()
         set(newValue) {
             field = newValue
@@ -27,9 +27,13 @@ class FunctionAdapter : RecyclerView.Adapter<FunctionAdapter.FunctionVeiwHolder>
     override fun onBindViewHolder(holder: FunctionVeiwHolder, position: Int) {
         val function = data[position]
 
+
         with(holder.binding) {
             imageOfFunctionViewInRecycleView.setImageResource(function.imageId)
             nameOfFunctionViewInRecycleView.setText(function.nameId)
+            imageOfFunctionViewInRecycleView.setOnClickListener {
+                mainActivity.setFunction(function)
+            }
         }
     }
 

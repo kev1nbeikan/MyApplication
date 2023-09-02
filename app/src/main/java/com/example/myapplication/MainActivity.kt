@@ -1,12 +1,17 @@
 package com.example.myapplication
 
+import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,12 +19,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var turnFunctionButton: Button
     private lateinit var imageOfFunctionView: ImageView;
     private lateinit var nameOFFunctionView: TextView;
-
     private lateinit var adapter: FunctionAdapter
-//    private val functionService: FunctionService
-//        get() = (applicationContext as App).functionService
 
-    lateinit var flashLight: FlashLight;
+    private lateinit var flashLight: FlashLight
+    private lateinit var bluetooth: Bluetooth
+    lateinit var functionController: FunctionController
+
+    lateinit var permissionLauncher: ActivityResultLauncher<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,52 +37,63 @@ class MainActivity : AppCompatActivity() {
 
         bindFunctionAdapter()
 
-        getFlashLight();
+        initFunctionsControllers()
 
         setDefaultFunction();
 
+        registerPermissionListener()
+    }
+
+    private fun initFunctionsControllers() {
+        flashLight = FlashLight(this)
+        bluetooth = Bluetooth(this)
     }
 
     private fun bindFunctionAdapter() {
-        val manager = LinearLayoutManager(this)
-        adapter = FunctionAdapter()
+        val manager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        adapter = FunctionAdapter(this)
         adapter.data = FunctionService().getFunctions()
 
         binding.functionsRecycleView.adapter = adapter
         binding.functionsRecycleView.layoutManager = manager
     }
 
-    private fun getFlashLight() {
-        flashLight = FlashLight(this);
-    }
-
     private fun setDefaultFunction() {
-        setFunctionToViews(
-            nameId = R.string.flashLight,
-            imageId = R.mipmap.flashlight
+        setFunction(
+            Function(
+                nameId = R.string.flashLight,
+                imageId = R.mipmap.flashlight,
+            )
         );
     }
 
-    private fun setFunctionToViews(nameId: Int, imageId: Int) {
-        nameOFFunctionView.setText(nameId)
-        imageOfFunctionView.setImageResource(imageId)
-        setItemClickListenerByName(turnFunctionButton, nameId);
+    fun setFunction(function: Function) {
+        nameOFFunctionView.setText(function.nameId)
+        imageOfFunctionView.setImageResource(function.imageId)
+        setItemClickListenerByName(turnFunctionButton, function.nameId)
+
     }
 
     private fun setItemClickListenerByName(button: Button, nameId: Int) {
 
-        when(nameId) {
+        when (nameId) {
 
-            R.string.flashLight -> button.setOnClickListener {
-                if (flashLight.getTurnStatus()) {
-                    flashLight.turnOff()
+            R.string.flashLight -> functionController = flashLight
+            R.string.bluetooth -> functionController = bluetooth
+        }
+
+        button.setOnClickListener {
+            if (functionController.getTurnStatus()) {
+                if (functionController.turnOff()) {
                     changeTurnButtonLabelToOn()
-                } else {
-                    flashLight.turnOn();
+                }
+            } else {
+                if (functionController.turnOn()) {
                     changeTurnButtonLabelToOff()
                 }
             }
         }
+
     }
 
     private fun changeTurnButtonLabelToOn() {
@@ -92,6 +110,33 @@ class MainActivity : AppCompatActivity() {
         turnFunctionButton = binding.turnFunctionButton
         imageOfFunctionView = binding.imageOfFunctionView
         nameOFFunctionView = binding.nameOfFunctionView
+    }
+
+
+    fun registerPermissionListener() {
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            if (!it) {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+            }
+        }
+
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
+
+            }
+        }
     }
 
 }
