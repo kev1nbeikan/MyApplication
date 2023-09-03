@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import android.app.Application
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -9,9 +8,7 @@ import com.example.myapplication.databinding.FanctionItemBinding
 
 data class Function(val imageId: Int, val nameId: Int)
 
-
-
-class FunctionAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter<FunctionAdapter.FunctionVeiwHolder>() {
+class FunctionAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapter<FunctionAdapter.FunctionVeiwHolder>() {
     var data: List<Function> = emptyList()
         set(newValue) {
             field = newValue
@@ -35,18 +32,13 @@ class FunctionAdapter(val mainActivity: MainActivity) : RecyclerView.Adapter<Fun
             imageOfFunctionViewInRecycleView.setImageResource(function.imageId)
             nameOfFunctionViewInRecycleView.setText(function.nameId)
             imageOfFunctionViewInRecycleView.setOnClickListener {
-                mainActivity.setFunction(function)
+                presenter.load(function)
             }
         }
     }
 
     class FunctionVeiwHolder(val binding: FanctionItemBinding) :
         RecyclerView.ViewHolder(binding.root)
-}
-
-
-class App : Application() {
-    val functionService = FunctionService()
 }
 
 class FunctionService {
