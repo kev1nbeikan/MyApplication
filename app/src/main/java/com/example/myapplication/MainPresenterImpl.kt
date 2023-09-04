@@ -3,7 +3,7 @@ package com.example.myapplication
 import android.content.Context
 import android.util.Log
 
-class MainPresenterImpl(val mainView: MainView): MainPresenter {
+class MainPresenterImpl(val mainView: MainView) : MainPresenter {
 
     lateinit var flashLight: FlashLight
     lateinit var bluetooth: Bluetooth
@@ -24,12 +24,12 @@ class MainPresenterImpl(val mainView: MainView): MainPresenter {
     override fun initFunctionsControllers(context: Context) {
         flashLight = FlashLight(context)
         Log.d("initFunctionsControllers", "init FlashLight")
-        bluetooth = Bluetooth(context, this)
+        bluetooth = Bluetooth(context)
         Log.d("initFunctionsControllers", "init Bluetooth")
         currentControllerPointer = flashLight
     }
 
-    fun setControllerPointerByNameId(nameId: Int) {
+    private fun setControllerPointerByNameId(nameId: Int) {
         when (nameId) {
             R.string.flashLight -> currentControllerPointer = flashLight
             R.string.bluetooth -> currentControllerPointer = bluetooth
@@ -37,6 +37,16 @@ class MainPresenterImpl(val mainView: MainView): MainPresenter {
     }
 
     fun onTurnButtonClicked() {
+
+        if (!checkPermissions(currentControllerPointer.permissions)) {
+            requestPermissions(currentControllerPointer.permissions)
+        }
+
+        if (!currentControllerPointer.isEnabled()) {
+            currentControllerPointer.onUnEnabled(this)
+        }
+
+
         if (currentControllerPointer.getTurnStatus()) {
             if (currentControllerPointer.turnOff()) {
                 mainView.changeTurnButtonLabelToOn()
@@ -61,6 +71,10 @@ class MainPresenterImpl(val mainView: MainView): MainPresenter {
     }
 
     fun onEnabledBluetooth() {
+        mainView.askToTurnBluetooth()
+    }
+
+    fun onEnabledFlashLight() {
         mainView.askToTurnBluetooth()
     }
 }

@@ -23,9 +23,6 @@ class MainActivity : AppCompatActivity(), MainView {
     private lateinit var nameOFControllerView: TextView;
     private lateinit var adapter: ControllersAdapter
 
-
-    lateinit var permissionLauncher: ActivityResultLauncher<String>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
