@@ -30,9 +30,6 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        presenter = MainPresenterImpl(this)
-        presenter.initFunctionsControllers(this)
-
         bindAll()
 
         setContentView(binding.root)
@@ -70,8 +67,8 @@ class MainActivity : AppCompatActivity(), MainView {
     private fun bindAll() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         bindViews()
-        bindFunctionAdapter()
         presenter = MainPresenterImpl(this)
+        bindFunctionAdapter()
     }
 
 
@@ -105,7 +102,7 @@ class MainActivity : AppCompatActivity(), MainView {
         imageOfFunctionView.setImageResource(function.imageId)
         presenter.setControllerByNameId(function.nameId)
         turnFunctionButton.setOnClickListener {
-            presenter.changeControllerState()
+            presenter.onTurnButtonClicked()
         }
     }
 

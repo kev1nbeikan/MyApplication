@@ -10,6 +10,10 @@ class MainPresenterImpl(val mainView: MainView): MainPresenter {
 
     lateinit var functionController: FunctionController
 
+    init {
+        initFunctionsControllers(mainView as Context)
+    }
+
     override fun load(function: com.example.myapplication.Function) {
         mainView.showController(function)
     }
@@ -30,7 +34,7 @@ class MainPresenterImpl(val mainView: MainView): MainPresenter {
         }
     }
 
-    fun changeControllerState() {
+    fun onTurnButtonClicked() {
         if (functionController.getTurnStatus()) {
             if (functionController.turnOff()) {
                 mainView.changeTurnButtonLabelToOn()
