@@ -24,14 +24,13 @@ class ControllersAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: FunctionVeiwHolder, position: Int) {
-        val function = data[position]
-
+        val controller = data[position]
 
         with(holder.binding) {
-            imageOfFunctionViewInRecycleView.setImageResource(function.imageId)
-            nameOfFunctionViewInRecycleView.setText(function.nameId)
+            imageOfFunctionViewInRecycleView.setImageResource(controller.imageId)
+            nameOfFunctionViewInRecycleView.setText(controller.nameId)
             imageOfFunctionViewInRecycleView.setOnClickListener {
-                presenter.onControllerSelected(function)
+                presenter.onControllerSelected(controller)
             }
         }
     }

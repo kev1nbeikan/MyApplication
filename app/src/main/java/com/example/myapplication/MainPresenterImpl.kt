@@ -8,6 +8,7 @@ class MainPresenterImpl(val mainView: MainView) : MainPresenter {
     lateinit var flashLight: FlashLight
     lateinit var bluetooth: Bluetooth
 
+
     lateinit var currentControllerPointer: Controller
 
     init {
@@ -33,6 +34,10 @@ class MainPresenterImpl(val mainView: MainView) : MainPresenter {
         mainView.showDefaultController()
     }
 
+    fun onBindViewItem(holder: ControllersAdapter.FunctionVeiwHolder, position: Int) {
+
+    }
+
     private fun setControllerPointerByNameId(nameId: Int) {
         when (nameId) {
             R.string.flashLight -> currentControllerPointer = flashLight
@@ -40,14 +45,18 @@ class MainPresenterImpl(val mainView: MainView) : MainPresenter {
         }
     }
 
+
+
     fun onTurnButtonClicked() {
 
         if (!checkPermissions(currentControllerPointer.permissions)) {
             requestPermissions(currentControllerPointer.permissions)
+            return
         }
 
         if (!currentControllerPointer.isEnabled()) {
             currentControllerPointer.onUnEnabled(this)
+            return
         }
 
 
