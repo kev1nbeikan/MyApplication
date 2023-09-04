@@ -7,7 +7,7 @@ interface MainPresenter {
 
     fun initFunctionsControllers(context: Context)
 
-    fun load(controller: ControllerData)
+    fun onControllerSelected(controller: ControllerData)
 
     fun checkPermissions(permissions: Array<String>): Boolean
     fun requestPermissions(permissions: Array<String>)

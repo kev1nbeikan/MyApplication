@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     override fun onPermissionRequested(permissions: Array<String>) {
-        this.requestPermissions(permissions, 1)
+        requestPermissions(permissions, 1)
     }
 
     override fun askToTurnBluetooth() {
@@ -90,12 +90,11 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun showController(controller: ControllerData) {
         nameOFControllerView.setText(controller.nameId)
         imageOfControllerView.setImageResource(controller.imageId)
-        turnControllerButton.text = getString(
-            if (controller.isTurned)
-                R.string.turnOff
-            else
-                R.string.turnOn
-        )
+        if (controller.isTurned) {
+            changeTurnButtonLabelToOff()
+        } else {
+            changeTurnButtonLabelToOn()
+        }
         turnControllerButton.setOnClickListener {
             presenter.onTurnButtonClicked()
         }

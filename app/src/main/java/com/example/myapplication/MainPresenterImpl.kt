@@ -14,19 +14,23 @@ class MainPresenterImpl(val mainView: MainView) : MainPresenter {
         initFunctionsControllers(mainView as Context)
     }
 
-    override fun load(controller: ControllerData) {
-        setControllerPointerByNameId(controller.nameId)
-        controller.isTurned = currentControllerPointer.getTurnStatus()
-        mainView.showController(controller)
-    }
-
-
     override fun initFunctionsControllers(context: Context) {
         flashLight = FlashLight(context)
         Log.d("initFunctionsControllers", "init FlashLight")
         bluetooth = Bluetooth(context)
         Log.d("initFunctionsControllers", "init Bluetooth")
         currentControllerPointer = flashLight
+    }
+
+
+    override fun onControllerSelected(controller: ControllerData) {
+        setControllerPointerByNameId(controller.nameId)
+        controller.isTurned = currentControllerPointer.getTurnStatus()
+        mainView.showController(controller)
+    }
+
+    fun onViewCreated() {
+        mainView.showDefaultController()
     }
 
     private fun setControllerPointerByNameId(nameId: Int) {
@@ -56,10 +60,6 @@ class MainPresenterImpl(val mainView: MainView) : MainPresenter {
                 mainView.changeTurnButtonLabelToOff()
             }
         }
-    }
-
-    fun onViewCreated() {
-        mainView.showDefaultController()
     }
 
     override fun checkPermissions(permissions: Array<String>): Boolean {

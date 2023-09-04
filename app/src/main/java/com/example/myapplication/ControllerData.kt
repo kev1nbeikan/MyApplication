@@ -31,7 +31,7 @@ class ControllersAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapte
             imageOfFunctionViewInRecycleView.setImageResource(function.imageId)
             nameOfFunctionViewInRecycleView.setText(function.nameId)
             imageOfFunctionViewInRecycleView.setOnClickListener {
-                presenter.load(function)
+                presenter.onControllerSelected(function)
             }
         }
     }
