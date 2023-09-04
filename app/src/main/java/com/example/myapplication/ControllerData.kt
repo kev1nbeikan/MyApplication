@@ -1,15 +1,14 @@
 package com.example.myapplication
 
-import android.app.Application
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.FanctionItemBinding
 
-data class Function(val imageId: Int, val nameId: Int)
+data class ControllerData(val imageId: Int, val nameId: Int, var isTurned: Boolean = false)
 
-class FunctionAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapter<FunctionAdapter.FunctionVeiwHolder>() {
-    var data: List<Function> = emptyList()
+class ControllersAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapter<ControllersAdapter.FunctionVeiwHolder>() {
+    var data: List<ControllerData> = emptyList()
         set(newValue) {
             field = newValue
             notifyDataSetChanged()
@@ -41,21 +40,21 @@ class FunctionAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapter<F
         RecyclerView.ViewHolder(binding.root)
 }
 
-class FunctionService {
+class ControllersService {
 
-    private var functions = mutableListOf<Function>(
-        Function(
+    private var controllers = mutableListOf<ControllerData>(
+        ControllerData(
             imageId = R.mipmap.flashlight,
             nameId = R.string.flashLight,
             ),
-        Function(
+        ControllerData(
             imageId = R.mipmap.bluetooth,
             nameId = R.string.bluetooth,
         )
     )
 
-    fun getFunctions(): MutableList<Function> {
-        return functions
+    fun getControllers(): MutableList<ControllerData> {
+        return controllers
     }
 
 }

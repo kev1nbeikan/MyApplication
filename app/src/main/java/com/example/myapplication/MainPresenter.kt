@@ -5,5 +5,8 @@ import android.content.Context
 interface MainPresenter {
     fun initFunctionsControllers(context: Context)
 
-    fun load(function: Function)
+    fun load(controller: ControllerData)
+
+    fun checkPermissions(permissions: Array<String>): Boolean
+    fun requestPermissions(permissions: Array<String>)
 }

@@ -3,35 +3,30 @@ package com.example.myapplication
 import android.Manifest
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
-import android.net.wifi.WifiManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
 
 
-interface FunctionController {
+interface Controller {
     fun getTurnStatus(): Boolean
     fun turnOff(): Boolean
     fun turnOn(): Boolean
 
 
-
 }
 
 
-class Bluetooth(context: Context) : FunctionController {
+class Bluetooth(context: Context, val presenter: MainPresenterImpl) : Controller {
     private val context: Context;
-    private val activity: MainActivity
 
     private var isTurn = false
 
     private val bluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
-    private val bluetoothPermissions = arrayOf(
+    val bluetoothPermissions = arrayOf(
         Manifest.permission.BLUETOOTH_SCAN,
         Manifest.permission.BLUETOOTH_CONNECT,
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -41,69 +36,72 @@ class Bluetooth(context: Context) : FunctionController {
 
     init {
         this.context = context
-        this.activity = context as MainActivity
     }
 
-    override fun getTurnStatus(): Boolean {
-        return if (checkBluetoothPermissions()) {
-            bluetoothManager.adapter.isDiscovering
-        } else {
+    override fun turnOn(): Boolean =
+        if (!isEnabled()) {
+            presenter.onEnabledBluetooth()
             false
-        }
-    }
-
-
-    private fun askBluetoothPermissions() {
-        activity.requestPermissions(
-            bluetoothPermissions, 1
-        )
-    }
-
-    private fun checkBluetoothPermissions(): Boolean {
-        bluetoothPermissions.forEach { permission ->
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    permission,
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return false
-            }
-        }
-        return true
-    }
-
-
-    override fun turnOff(): Boolean {
-        return if (checkBluetoothPermissions()) {
-            if (bluetoothManager.adapter.isDiscovering) {
-                Log.d("Bluetooth", "cancelDiscovering")
-                bluetoothManager.adapter.startDiscovery()
-                isTurn = false
-            }
-            true
-        } else {
-            askBluetoothPermissions()
-            false
-        }
-    }
-
-    override fun turnOn(): Boolean {
-        return if (checkBluetoothPermissions()) {
-            if (!bluetoothManager.adapter.isDiscovering) {
-                Log.d("Bluetooth", "startDiscovering")
-                bluetoothManager.adapter.startDiscovery()
+        } else if (checkPermissions()) {
+            if (!isDiscovering()) {
+                startDiscovery()
                 isTurn = true
             }
             true
         } else {
-            askBluetoothPermissions()
+            askPermissions()
             false
         }
+
+    override fun turnOff(): Boolean =
+        if (!isEnabled()) {
+            presenter.onEnabledBluetooth()
+            false
+        } else if (checkPermissions()) {
+            if (isDiscovering()) {
+                cancelDiscovery()
+                isTurn = false
+            }
+            true
+        } else {
+            askPermissions()
+            false
+        }
+
+    override fun getTurnStatus(): Boolean =
+        if (checkPermissions()) {
+            isDiscovering()
+        } else {
+            false
+        }
+
+
+    private fun askPermissions() {
+        presenter.requestPermissions(bluetoothPermissions)
     }
 
+    private fun checkPermissions(): Boolean {
+        return presenter.checkPermissions(bluetoothPermissions)
+    }
+
+    private fun isEnabled(): Boolean {
+        return bluetoothManager.adapter.isEnabled
+    }
+
+    private fun cancelDiscovery() {
+        bluetoothManager.adapter.cancelDiscovery()
+    }
+
+    private fun isDiscovering(): Boolean {
+        return bluetoothManager.adapter.isDiscovering
+    }
+
+    private fun startDiscovery() {
+        bluetoothManager.adapter.startDiscovery()
+    }
 }
 
-class FlashLight(context: Context) : FunctionController {
+class FlashLight(context: Context) : Controller {
 
     private val context: Context;
 
@@ -131,19 +129,24 @@ class FlashLight(context: Context) : FunctionController {
         }
     }
 
+    private fun isAvailable(): Boolean {
+        val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
+        return cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+    }
 
     override fun turnOff(): Boolean {
+
+        if (!isAvailable()) {
+            return false
+        }
 
         if (!isTurn) {
             return true
         }
 
         try {
-            val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
-            if (cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true) {
-                cameraManager.setTorchMode(cameraId, false)
-                isTurn = false;
-            }
+            cameraManager.setTorchMode(cameraId, false)
+            isTurn = false;
             return true
         } catch (exception: CameraAccessException) {
             exception.printStackTrace()
@@ -153,17 +156,17 @@ class FlashLight(context: Context) : FunctionController {
 
     override fun turnOn(): Boolean {
 
+        if (!isAvailable()) {
+            return false
+        }
+
         if (isTurn) {
             return true
         }
 
         try {
-            Log.d("flashLight", "$cameraId")
-            val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
-            if (cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true) {
-                cameraManager.setTorchMode(cameraId, true)
-                isTurn = true;
-            }
+            cameraManager.setTorchMode(cameraId, true)
+            isTurn = true;
             return true
         } catch (exception: CameraAccessException) {
             exception.printStackTrace()

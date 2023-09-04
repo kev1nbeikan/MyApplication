@@ -7,8 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.databinding.ActivityMainBinding
 
@@ -18,11 +18,10 @@ class MainActivity : AppCompatActivity(), MainView {
     private lateinit var presenter: MainPresenterImpl
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var turnFunctionButton: Button
-    private lateinit var imageOfFunctionView: ImageView;
-    private lateinit var nameOFFunctionView: TextView;
-    private lateinit var adapter: FunctionAdapter
-
+    private lateinit var turnControllerButton: Button
+    private lateinit var imageOfControllerView: ImageView;
+    private lateinit var nameOFControllerView: TextView;
+    private lateinit var adapter: ControllersAdapter
 
 
     lateinit var permissionLauncher: ActivityResultLauncher<String>
@@ -34,15 +33,13 @@ class MainActivity : AppCompatActivity(), MainView {
 
         setContentView(binding.root)
 
-        showDefaultController()
-
-        registerPermissionListener()
+        presenter.onViewCreated()
     }
 
     private fun bindFunctionAdapter() {
         val manager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        adapter = FunctionAdapter(presenter)
-        adapter.data = FunctionService().getFunctions()
+        adapter = ControllersAdapter(presenter)
+        adapter.data = ControllersService().getControllers()
 
         binding.functionsRecycleView.adapter = adapter
         binding.functionsRecycleView.layoutManager = manager
@@ -50,18 +47,39 @@ class MainActivity : AppCompatActivity(), MainView {
 
 
     override fun changeTurnButtonLabelToOn() {
-        turnFunctionButton.setText(R.string.turnOn)
+        turnControllerButton.setText(R.string.turnOn)
     }
 
     override fun changeTurnButtonLabelToOff() {
-        turnFunctionButton.setText(R.string.turnOff)
+        turnControllerButton.setText(R.string.turnOff)
+    }
+
+    override fun onPermissionsCheckAsked(permissions: Array<String>): Boolean {
+        permissions.forEach { permission ->
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    permission,
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        }
+        return true
+    }
+
+    override fun onPermissionRequested(permissions: Array<String>) {
+        this.requestPermissions(permissions, 1)
+    }
+
+    override fun askToTurnBluetooth() {
+        Toast.makeText(this, getString(R.string.askingTurnBluetooth), Toast.LENGTH_LONG).show()
     }
 
 
     private fun bindViews() {
-        turnFunctionButton = binding.turnFunctionButton
-        imageOfFunctionView = binding.imageOfFunctionView
-        nameOFFunctionView = binding.nameOfFunctionView
+        turnControllerButton = binding.turnFunctionButton
+        imageOfControllerView = binding.imageOfFunctionView
+        nameOFControllerView = binding.nameOfFunctionView
     }
 
     private fun bindAll() {
@@ -72,43 +90,23 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
 
-    fun registerPermissionListener() {
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (!it) {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
-            }
-        }
-
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) {
-            if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-            } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
-
-            }
-        }
-    }
-
-    override fun showController(function: Function) {
-        nameOFFunctionView.setText(function.nameId)
-        imageOfFunctionView.setImageResource(function.imageId)
-        presenter.setControllerByNameId(function.nameId)
-        turnFunctionButton.setOnClickListener {
+    override fun showController(controller: ControllerData) {
+        nameOFControllerView.setText(controller.nameId)
+        imageOfControllerView.setImageResource(controller.imageId)
+        turnControllerButton.text = getString(
+            if (controller.isTurned)
+                R.string.turnOff
+            else
+                R.string.turnOn
+        )
+        turnControllerButton.setOnClickListener {
             presenter.onTurnButtonClicked()
         }
     }
 
     override fun showDefaultController() {
         showController(
-            Function(
+            ControllerData(
                 nameId = R.string.flashLight,
                 imageId = R.mipmap.flashlight,
             )

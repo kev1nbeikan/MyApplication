@@ -13,4 +13,5 @@
     <string name="turnOn">Включить</string>
     <string name="flashLight">фонарик</string>
     <string name="bluetooth">блютуз</string>
+    <string name="askingTurnBluetooth">включите блютуз</string>
 </resources>
