@@ -1,14 +1,15 @@
 package com.example.myapplication.presentation
 
-import android.content.Context
 import com.example.myapplication.*
 import com.example.myapplication.domain.*
+import org.koin.java.KoinJavaComponent.inject
 
-class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
+class MainPresenterImpl() : MainPresenter {
 
-    private val flashLight: FlashLight by lazy { FlashLight(mainView as Context) }
-    private val bluetoothDiscovery: BluetoothDiscovery by lazy { BluetoothDiscovery(mainView as Context) }
+    private val flashLight: FlashLight by inject<FlashLight>(FlashLight::class.java)
+    private val bluetoothDiscovery: BluetoothDiscovery by inject<BluetoothDiscovery>(BluetoothDiscovery::class.java)
 
+    private lateinit var mainView: MainView
 
     private lateinit var currentController: Controller
 
@@ -19,6 +20,10 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
 
     private var currentControllerIndex: Int = 0
+
+    override fun attach(mainView: MainView) {
+        this.mainView = mainView
+    }
 
     override fun onControllerSelected(controllerData: ControllerData) {
         setCurrentController(controllerData.nameId)
@@ -32,12 +37,9 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
     }
 
 
-    override fun onViewCreated() {
+    override fun onStart() {
         onControllerSelected(
-            ControllerData(
-                imageId = R.mipmap.flashlight,
-                nameId = R.string.flashLight,
-            )
+            controllersData[currentControllerIndex]
         )
     }
 

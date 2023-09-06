@@ -2,8 +2,7 @@ package com.example.myapplication.presentation
 
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,11 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.*
 import com.example.myapplication.domain.ControllerData
 import com.example.myapplication.databinding.ActivityMainBinding
+import org.koin.java.KoinJavaComponent.inject
 
 
 class MainActivity : AppCompatActivity(), MainView {
 
-    private val presenter: MainPresenter by lazy { MainPresenterImpl(this) }
+    private val presenter: MainPresenter by inject<MainPresenterImpl>(MainPresenterImpl::class.java)
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var turnControllerButton: Button
@@ -26,13 +26,42 @@ class MainActivity : AppCompatActivity(), MainView {
     private lateinit var nameOFControllerView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.v("activity", "onCreate")
         super.onCreate(savedInstanceState)
 
         bindAll()
 
+
         setContentView(binding.root)
 
-        presenter.onViewCreated()
+        presenter.attach(this)
+
+        Log.d("bindViews", "${binding.turnFunctionButton}")
+        presenter.onStart()
+
+    }
+
+
+    override fun onResume() {
+        Log.v("activity", "onResume")
+        super.onResume()
+    }
+
+    override fun onStop() {
+        Log.v("activity", "onStop")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Log.v("activity", "onDestroy")
+        super.onDestroy()
+    }
+
+    override fun onStart() {
+        Log.v("activity", "onStart")
+        super.onStart()
+//        presenter.onStart()
+
     }
 
     override fun showController(controllerData: ControllerData) {
@@ -95,10 +124,12 @@ class MainActivity : AppCompatActivity(), MainView {
         binding = ActivityMainBinding.inflate(layoutInflater)
         bindViews()
         bindFunctionAdapter()
+        setContentView(binding.root)
     }
 
     private fun bindViews() {
         turnControllerButton = binding.turnFunctionButton
+        Log.d("bindViews", "${binding.turnFunctionButton}")
         imageOfControllerView = binding.imageOfFunctionView
         nameOFControllerView = binding.nameOfFunctionView
     }

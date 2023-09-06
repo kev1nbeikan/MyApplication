@@ -44,11 +44,13 @@ open class OnSwipeTouchListener(ctx: Context?) : OnTouchListener {
                 val diffY = detouchEvent.y - touchEvent!!.y
                 val diffX = detouchEvent.x - touchEvent.x
 
-                val isValidVerticalSwipe =
+                val isHorizontalSwipe = abs(diffX) > abs(diffY)
+
+                val isValidVerticalSwipe = !isHorizontalSwipe &&
                     abs(diffX) > Companion.SWIPE_THRESHOLD && abs(velocityX) > Companion.SWIPE_VELOCITY_THRESHOLD
 
                 val isValidHorizontalSwipe =
-                    abs(diffX) > abs(diffY) && abs(diffX) > Companion.SWIPE_THRESHOLD && abs(
+                    isHorizontalSwipe && abs(diffX) > Companion.SWIPE_THRESHOLD && abs(
                         velocityX
                     ) > Companion.SWIPE_VELOCITY_THRESHOLD
 

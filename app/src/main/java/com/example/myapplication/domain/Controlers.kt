@@ -75,7 +75,8 @@ class BluetoothDiscovery(context: Context) : Controller() {
         return true
     }
 
-    override fun isTurn(): Boolean = bluetoothManager.adapter.isDiscovering
+    override fun isTurn(): Boolean =
+        bluetoothManager.adapter.isDiscovering
 
     override fun isEnabled(): Boolean {
         return bluetoothManager.adapter.isEnabled
