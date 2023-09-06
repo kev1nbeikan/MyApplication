@@ -6,12 +6,33 @@ import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import com.example.myapplication.presentation.MainPresenterImpl
 
+
+data class ControllerData(val imageId: Int, val nameId: Int, var isTurned: Boolean = false)
+
+class ControllersService {
+
+    private var controllers = mutableListOf<ControllerData>(
+        ControllerData(
+            imageId = R.mipmap.flashlight,
+            nameId = R.string.flashLight,
+        ),
+        ControllerData(
+            imageId = R.mipmap.bluetooth,
+            nameId = R.string.bluetooth,
+        )
+    )
+
+    fun getControllers(): MutableList<ControllerData> {
+        return controllers
+    }
+
+}
 
 abstract class Controller {
 
     abstract val permissions: Array<String>
-
 
     abstract fun getTurnStatus(): Boolean
     abstract fun turnOff(): Boolean
@@ -29,7 +50,7 @@ class Bluetooth(context: Context) : Controller() {
     private val bluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
-    override val permissions: Array<String> =  arrayOf(
+    override val permissions: Array<String> = arrayOf(
         Manifest.permission.BLUETOOTH_SCAN,
         Manifest.permission.BLUETOOTH_CONNECT,
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -136,7 +157,7 @@ class FlashLight(context: Context) : Controller() {
 
             cameraManager.setTorchMode(cameraId, false)
             isTurn = false;
-            isSuccess =  true
+            isSuccess = true
 
         } catch (exception: CameraAccessException) {
             exception.printStackTrace()

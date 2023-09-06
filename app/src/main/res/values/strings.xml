@@ -14,4 +14,5 @@
     <string name="flashLight">фонарик</string>
     <string name="bluetooth">блютуз</string>
     <string name="askingTurnBluetooth">включите блютуз</string>
+    <string name="flashLightIsUnenable">фонарик недоступен</string>
 </resources>

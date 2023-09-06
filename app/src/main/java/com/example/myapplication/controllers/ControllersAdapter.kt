@@ -4,10 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.databinding.FanctionItemBinding
+import com.example.myapplication.presentation.MainPresenter
 
-data class ControllerData(val imageId: Int, val nameId: Int, var isTurned: Boolean = false)
-
-class ControllersAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapter<ControllersAdapter.FunctionVeiwHolder>() {
+class ControllersAdapter(val presenter: MainPresenter) : RecyclerView.Adapter<ControllersAdapter.ControllerVeiwHolder>() {
     var data: List<ControllerData> = emptyList()
         set(newValue) {
             field = newValue
@@ -16,14 +15,14 @@ class ControllersAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapte
 
     override fun getItemCount(): Int = data.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FunctionVeiwHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ControllerVeiwHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = FanctionItemBinding.inflate(inflater, parent, false)
 
-        return FunctionVeiwHolder(binding)
+        return ControllerVeiwHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: FunctionVeiwHolder, position: Int) {
+    override fun onBindViewHolder(holder: ControllerVeiwHolder, position: Int) {
         val controller = data[position]
 
         with(holder.binding) {
@@ -35,25 +34,8 @@ class ControllersAdapter(val presenter: MainPresenterImpl) : RecyclerView.Adapte
         }
     }
 
-    class FunctionVeiwHolder(val binding: FanctionItemBinding) :
+    class ControllerVeiwHolder(val binding: FanctionItemBinding) :
         RecyclerView.ViewHolder(binding.root)
 }
 
-class ControllersService {
 
-    private var controllers = mutableListOf<ControllerData>(
-        ControllerData(
-            imageId = R.mipmap.flashlight,
-            nameId = R.string.flashLight,
-            ),
-        ControllerData(
-            imageId = R.mipmap.bluetooth,
-            nameId = R.string.bluetooth,
-        )
-    )
-
-    fun getControllers(): MutableList<ControllerData> {
-        return controllers
-    }
-
-}
