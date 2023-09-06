@@ -2,7 +2,7 @@ package com.example.myapplication.presentation
 
 import android.content.Context
 import com.example.myapplication.*
-import com.example.myapplication.controllers.*
+import com.example.myapplication.domain.*
 
 class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
@@ -12,11 +12,13 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
     private lateinit var currentController: Controller
 
-
     private val controllersData = ControllersService().getControllers()
 
     override val itemsCount: Int
         get() = controllersData.size
+
+
+    private var currentControllerIndex: Int = 0
 
     override fun onControllerSelected(controllerData: ControllerData) {
         setCurrentController(controllerData.nameId)
@@ -28,6 +30,7 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
         }
         mainView.showController(controllerData)
     }
+
 
     override fun onViewCreated() {
         onControllerSelected(
@@ -42,13 +45,26 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
         itemView.bindItem(controllersData[position])
     }
 
-    private fun setCurrentController(nameId: Int) {
-        when (nameId) {
-            R.string.flashLight -> currentController = flashLight
-            R.string.bluetooth -> currentController = bluetoothDiscovery
-        }
+    override fun onSwipedRight() {
+        onControllerSelected(controllersData[decreaseCurrentControllerIndex()])
     }
 
+    override fun onSwipedLeft() {
+        onControllerSelected(controllersData[increaseCurrentControllerIndex()])
+    }
+
+    private fun setCurrentController(nameId: Int) {
+        when (nameId) {
+            R.string.flashLight -> {
+                currentController = flashLight
+                currentControllerIndex = 0
+            }
+            R.string.bluetooth -> {
+                currentController = bluetoothDiscovery
+                currentControllerIndex = 1
+            }
+        }
+    }
 
     override fun onTurnButtonClicked() {
 
@@ -74,6 +90,7 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
         }
     }
 
+
     override fun checkPermissions(permissions: Array<String>): Boolean {
         return mainView.onPermissionsCheckAsked(permissions)
     }
@@ -88,5 +105,23 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
     override fun onEnabledFlashLight() {
         mainView.notifyFlashLightUnenable()
+    }
+
+    private fun getCurrentControllerIndex(value: Int): Int {
+        return if (currentControllerIndex == 0 && value < 0) {
+            itemsCount + value
+        } else {
+            (currentControllerIndex + value) % 2
+        }
+    }
+
+    private fun increaseCurrentControllerIndex(): Int {
+        currentControllerIndex = getCurrentControllerIndex(+1)
+        return currentControllerIndex
+    }
+
+    private fun decreaseCurrentControllerIndex(): Int {
+        currentControllerIndex = getCurrentControllerIndex(-1)
+        return currentControllerIndex
     }
 }

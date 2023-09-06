@@ -1,4 +1,4 @@
-package com.example.myapplication.controllers
+package com.example.myapplication.domain
 
 import android.Manifest
 import android.bluetooth.BluetoothManager

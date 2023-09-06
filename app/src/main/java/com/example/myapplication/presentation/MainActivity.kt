@@ -2,6 +2,8 @@ package com.example.myapplication.presentation
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.*
-import com.example.myapplication.controllers.ControllerData
+import com.example.myapplication.domain.ControllerData
 import com.example.myapplication.databinding.ActivityMainBinding
 
 
@@ -36,6 +38,21 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun showController(controllerData: ControllerData) {
         nameOFControllerView.setText(controllerData.nameId)
         imageOfControllerView.setImageResource(controllerData.imageId)
+        imageOfControllerView.setOnTouchListener(object : OnSwipeTouchListener(this@MainActivity) {
+            override fun onSwipeTop() {
+                Toast.makeText(this@MainActivity, "top", Toast.LENGTH_SHORT).show()
+            }
+            override fun onSwipeRight() {
+                presenter.onSwipedRight()
+            }
+            override fun onSwipeLeft() {
+                presenter.onSwipedLeft()
+            }
+            override fun onSwipeBottom() {
+                Toast.makeText(this@MainActivity, "bottom", Toast.LENGTH_SHORT).show()
+            }
+
+        })
         turnControllerButton.setOnClickListener {
             presenter.onTurnButtonClicked()
         }

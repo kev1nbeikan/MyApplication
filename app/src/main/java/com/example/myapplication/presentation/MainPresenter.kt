@@ -1,6 +1,6 @@
 package com.example.myapplication.presentation
 
-import com.example.myapplication.controllers.ControllerData
+import com.example.myapplication.domain.ControllerData
 
 interface MainPresenter {
     val itemsCount: Int
@@ -13,4 +13,6 @@ interface MainPresenter {
     fun onEnabledFlashLight()
     fun onViewCreated()
     fun onBindItemView(itemView: ItemView, position: Int)
+    fun onSwipedRight()
+    fun onSwipedLeft()
 }

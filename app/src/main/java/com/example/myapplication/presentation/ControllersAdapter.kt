@@ -3,7 +3,7 @@ package com.example.myapplication.presentation
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.controllers.ControllerData
+import com.example.myapplication.domain.ControllerData
 import com.example.myapplication.databinding.ContorllerItemBinding
 
 class ControllersAdapter(private val presenter: MainPresenter) : RecyclerView.Adapter<ControllersAdapter.ControllerViewHolder>() {
@@ -27,6 +27,7 @@ class ControllersAdapter(private val presenter: MainPresenter) : RecyclerView.Ad
                 nameOfControllersItem.setText(controllerData.nameId)
                 imageOfControllersItem.setOnClickListener {
                     presenter.onControllerSelected(controllerData)
+
                 }
             }
         }

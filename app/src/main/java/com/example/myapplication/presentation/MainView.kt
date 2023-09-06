@@ -1,6 +1,6 @@
 package com.example.myapplication.presentation
 
-import com.example.myapplication.controllers.ControllerData
+import com.example.myapplication.domain.ControllerData
 
 interface MainView {
     fun showController(controllerData: ControllerData)
