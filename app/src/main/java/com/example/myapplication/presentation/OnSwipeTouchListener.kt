@@ -38,37 +38,45 @@ open class OnSwipeTouchListener(ctx: Context?) : OnTouchListener {
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            var result = false
+            var isSuccess = false
             try {
+
                 val diffY = detouchEvent.y - touchEvent!!.y
                 val diffX = detouchEvent.x - touchEvent.x
 
-                val isValidVerticalSwipe = abs(diffX) > Companion.SWIPE_THRESHOLD && abs(velocityX) > Companion.SWIPE_VELOCITY_THRESHOLD
+                val isValidVerticalSwipe =
+                    abs(diffX) > Companion.SWIPE_THRESHOLD && abs(velocityX) > Companion.SWIPE_VELOCITY_THRESHOLD
 
-                if (abs(diffX) > abs(diffY)) {
+                val isValidHorizontalSwipe =
+                    abs(diffX) > abs(diffY) && abs(diffX) > Companion.SWIPE_THRESHOLD && abs(
+                        velocityX
+                    ) > Companion.SWIPE_VELOCITY_THRESHOLD
 
-                    val isValidHorizontalSwipe = abs(diffX) > Companion.SWIPE_THRESHOLD && abs(velocityX) > Companion.SWIPE_VELOCITY_THRESHOLD
 
-                    if (isValidHorizontalSwipe) {
-                        if (diffX > 0) {
-                            onSwipeRight()
-                        } else {
-                            onSwipeLeft()
-                        }
-                        result = true
-                    }
+
+                if (isValidHorizontalSwipe) {
+                    if (diffX > 0)
+                        onSwipeRight()
+                    else
+                        onSwipeLeft()
+
+                    isSuccess = true
+
                 } else if (isValidVerticalSwipe) {
+
                     if (diffY > 0) {
                         onSwipeBottom()
                     } else {
                         onSwipeTop()
                     }
-                    result = true
+
+                    isSuccess = true
+
                 }
             } catch (exception: Exception) {
                 exception.printStackTrace()
             }
-            return result
+            return isSuccess
         }
     }
 
