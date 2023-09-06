@@ -1,5 +1,6 @@
 package com.example.myapplication.presentation
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun showController(controllerData: ControllerData) {
         nameOFControllerView.setText(controllerData.nameId)
         imageOfControllerView.setImageResource(controllerData.imageId)

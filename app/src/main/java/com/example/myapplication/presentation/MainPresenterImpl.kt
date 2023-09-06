@@ -9,7 +9,7 @@ class MainPresenterImpl() : MainPresenter {
     private val flashLight: FlashLight by inject<FlashLight>(FlashLight::class.java)
     private val bluetoothDiscovery: BluetoothDiscovery by inject<BluetoothDiscovery>(BluetoothDiscovery::class.java)
 
-    private lateinit var mainView: MainView
+    lateinit var mainView: MainView
 
     private lateinit var currentController: Controller
 
@@ -23,6 +23,7 @@ class MainPresenterImpl() : MainPresenter {
 
     override fun attach(mainView: MainView) {
         this.mainView = mainView
+        flashLight.registerCallBack(this)
     }
 
     override fun onControllerSelected(controllerData: ControllerData) {

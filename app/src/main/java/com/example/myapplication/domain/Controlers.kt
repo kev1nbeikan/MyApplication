@@ -5,9 +5,13 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
+import androidx.activity.result.PickVisualMediaRequest
 import com.example.myapplication.R
+import com.example.myapplication.presentation.MainPresenter
 import com.example.myapplication.presentation.MainPresenterImpl
+import java.sql.Types.NULL
 
 
 data class ControllerData(val imageId: Int, val nameId: Int, var isTurned: Boolean = false)
@@ -107,12 +111,28 @@ class FlashLight(context: Context) : Controller() {
 
     private var cameraId = ""
 
+
     override val permissions: Array<String> = emptyArray()
 
     init {
         this.context = context
-
         getCameraId()
+
+    }
+
+    fun registerCallBack(presenter: MainPresenter) {
+        cameraManager.registerTorchCallback( object: CameraManager.TorchCallback() {
+            override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
+                super.onTorchModeChanged(cameraId, enabled)
+                presenter as MainPresenterImpl
+                if (enabled) {
+                    presenter.mainView.changeTurnButtonLabelToOff()
+                } else {
+                    presenter.mainView.changeTurnButtonLabelToOn()
+
+                }
+            }
+        }, null)
     }
 
     override fun turnOff(): Boolean {
@@ -150,6 +170,7 @@ class FlashLight(context: Context) : Controller() {
     }
 
     override fun isTurn(): Boolean {
+        val characteristics = cameraManager.getCameraExtensionCharacteristics(cameraId)
         return turnStatus
     }
 
