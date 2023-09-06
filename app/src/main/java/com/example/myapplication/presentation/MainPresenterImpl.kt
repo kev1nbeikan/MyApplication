@@ -106,7 +106,7 @@ class MainPresenterImpl() : MainPresenter {
     }
 
     override fun onEnabledFlashLight() {
-        mainView.notifyFlashLightUnenable()
+        mainView.allertFlashLightUnenable()
     }
 
     private fun getCurrentControllerIndex(value: Int): Int {

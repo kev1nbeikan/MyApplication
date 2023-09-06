@@ -31,66 +31,32 @@ class MainActivity : AppCompatActivity(), MainView {
 
         bindAll()
 
-
         setContentView(binding.root)
 
         presenter.attach(this)
-
-        Log.d("bindViews", "${binding.turnFunctionButton}")
-        presenter.onStart()
-
     }
 
-
-    override fun onResume() {
-        Log.v("activity", "onResume")
-        super.onResume()
-    }
-
-    override fun onStop() {
-        Log.v("activity", "onStop")
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        Log.v("activity", "onDestroy")
-        super.onDestroy()
-    }
 
     override fun onStart() {
         Log.v("activity", "onStart")
         super.onStart()
-//        presenter.onStart()
-
+        presenter.onStart()
     }
+
 
     override fun showController(controllerData: ControllerData) {
         nameOFControllerView.setText(controllerData.nameId)
         imageOfControllerView.setImageResource(controllerData.imageId)
-        imageOfControllerView.setOnTouchListener(object : OnSwipeTouchListener(this@MainActivity) {
-            override fun onSwipeTop() {
-                Toast.makeText(this@MainActivity, "top", Toast.LENGTH_SHORT).show()
-            }
-            override fun onSwipeRight() {
-                presenter.onSwipedRight()
-            }
-            override fun onSwipeLeft() {
-                presenter.onSwipedLeft()
-            }
-            override fun onSwipeBottom() {
-                Toast.makeText(this@MainActivity, "bottom", Toast.LENGTH_SHORT).show()
-            }
-
-        })
+        imageOfControllerView.setOnTouchListener(ImageControllerViewSwipeListener(this, presenter))
         turnControllerButton.setOnClickListener {
             presenter.onTurnButtonClicked()
         }
     }
 
-
     override fun changeTurnButtonLabelToOn() {
         turnControllerButton.setText(R.string.turnOn)
     }
+
 
     override fun changeTurnButtonLabelToOff() {
         turnControllerButton.setText(R.string.turnOff)
@@ -116,7 +82,7 @@ class MainActivity : AppCompatActivity(), MainView {
         Toast.makeText(this, getString(R.string.askingTurnBluetooth), Toast.LENGTH_LONG).show()
     }
 
-    override fun notifyFlashLightUnenable() {
+    override fun allertFlashLightUnenable() {
         Toast.makeText(this, getString(R.string.flashLightIsUnenable), Toast.LENGTH_LONG).show()
     }
 
@@ -139,8 +105,23 @@ class MainActivity : AppCompatActivity(), MainView {
         binding.controllersRecycleView.layoutManager = getHorizontalLinearLayoutManager()
     }
 
-
     private fun getHorizontalLinearLayoutManager(): LinearLayoutManager {
         return LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+    }
+
+
+    override fun onResume() {
+        Log.v("activity", "onResume")
+        super.onResume()
+    }
+
+    override fun onStop() {
+        Log.v("activity", "onStop")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Log.v("activity", "onDestroy")
+        super.onDestroy()
     }
 }

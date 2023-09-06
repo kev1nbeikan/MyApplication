@@ -9,5 +9,5 @@ interface MainView {
     fun onPermissionsCheckAsked(permissions: Array<String>): Boolean
     fun onPermissionRequested(permissions: Array<String>)
     fun askToTurnBluetooth()
-    fun notifyFlashLightUnenable()
+    fun allertFlashLightUnenable()
 }

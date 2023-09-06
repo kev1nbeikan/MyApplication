@@ -6,6 +6,7 @@ import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import android.widget.Toast
 import kotlin.math.abs
 
 
@@ -47,7 +48,7 @@ open class OnSwipeTouchListener(ctx: Context?) : OnTouchListener {
                 val isHorizontalSwipe = abs(diffX) > abs(diffY)
 
                 val isValidVerticalSwipe = !isHorizontalSwipe &&
-                    abs(diffX) > Companion.SWIPE_THRESHOLD && abs(velocityX) > Companion.SWIPE_VELOCITY_THRESHOLD
+                        abs(diffX) > Companion.SWIPE_THRESHOLD && abs(velocityX) > Companion.SWIPE_VELOCITY_THRESHOLD
 
                 val isValidHorizontalSwipe =
                     isHorizontalSwipe && abs(diffX) > Companion.SWIPE_THRESHOLD && abs(
@@ -86,4 +87,24 @@ open class OnSwipeTouchListener(ctx: Context?) : OnTouchListener {
     open fun onSwipeLeft() {}
     open fun onSwipeTop() {}
     open fun onSwipeBottom() {}
+}
+
+
+
+class ImageControllerViewSwipeListener(private val context: Context, private val presenter: MainPresenter): OnSwipeTouchListener(context) {
+    override fun onSwipeTop() {
+        Toast.makeText(context, "top", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onSwipeRight() {
+        presenter.onSwipedRight()
+    }
+
+    override fun onSwipeLeft() {
+        presenter.onSwipedLeft()
+    }
+
+    override fun onSwipeBottom() {
+        Toast.makeText(context, "bottom", Toast.LENGTH_SHORT).show()
+    }
 }
