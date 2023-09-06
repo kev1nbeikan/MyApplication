@@ -4,7 +4,6 @@ import com.example.myapplication.controllers.ControllerData
 
 interface MainView {
     fun showController(controllerData: ControllerData)
-    fun showDefaultController()
     fun changeTurnButtonLabelToOn()
     fun changeTurnButtonLabelToOff()
     fun onPermissionsCheckAsked(permissions: Array<String>): Boolean

@@ -17,7 +17,7 @@ import com.example.myapplication.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), MainView {
 
-    private val presenter: MainPresenter by lazy { MainPresenterImpl(this) }
+    private val presenter: MainPresenter by lazy { MainPresenterImpl(this, ) }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var turnControllerButton: Button
@@ -41,16 +41,6 @@ class MainActivity : AppCompatActivity(), MainView {
         turnControllerButton.setOnClickListener {
             presenter.onTurnButtonClicked()
         }
-    }
-
-
-    override fun showDefaultController() {
-        presenter.onControllerSelected(
-            ControllerData(
-                imageId = R.mipmap.flashlight,
-                nameId = R.string.flashLight,
-            )
-        )
     }
 
 
@@ -105,6 +95,7 @@ class MainActivity : AppCompatActivity(), MainView {
 
     private fun getControllersAdapter(): ControllersAdapter {
         adapter = ControllersAdapter(presenter)
+
         adapter.data = ControllersService().getControllers()
         return adapter
     }

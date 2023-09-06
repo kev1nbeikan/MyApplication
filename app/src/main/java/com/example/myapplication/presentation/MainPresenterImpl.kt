@@ -2,10 +2,7 @@ package com.example.myapplication.presentation
 
 import android.content.Context
 import com.example.myapplication.*
-import com.example.myapplication.controllers.Bluetooth
-import com.example.myapplication.controllers.Controller
-import com.example.myapplication.controllers.ControllerData
-import com.example.myapplication.controllers.FlashLight
+import com.example.myapplication.controllers.*
 
 class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
@@ -14,6 +11,12 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
 
     private lateinit var currentController: Controller
+
+
+    private val controllersData = ControllersService().getControllers()
+
+    override val itemsCount: Int
+        get() = controllersData.size
 
     override fun onControllerSelected(controllerData: ControllerData) {
         setCurrentController(controllerData.nameId)
@@ -27,11 +30,16 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
     }
 
     override fun onViewCreated() {
-        mainView.showDefaultController()
+        onControllerSelected(
+            ControllerData(
+                imageId = R.mipmap.flashlight,
+                nameId = R.string.flashLight,
+            )
+        )
     }
 
-    fun onBindViewItem(holder: ControllersAdapter.ControllerVeiwHolder, position: Int) {
-
+    override fun onBindItemView(itemView: ItemView, position: Int) {
+        itemView.bindItem(controllersData[position])
     }
 
     private fun setCurrentController(nameId: Int) {
