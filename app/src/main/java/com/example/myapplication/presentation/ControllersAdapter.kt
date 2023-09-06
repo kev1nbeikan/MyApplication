@@ -4,20 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.controllers.ControllerData
-import com.example.myapplication.databinding.FanctionItemBinding
+import com.example.myapplication.databinding.ContorllerItemBinding
 
 class ControllersAdapter(private val presenter: MainPresenter) : RecyclerView.Adapter<ControllersAdapter.ControllerViewHolder>() {
-    var data: List<ControllerData> = emptyList()
-        set(newValue) {
-            field = newValue
-            notifyDataSetChanged()
-        }
-
     override fun getItemCount(): Int = presenter.itemsCount
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ControllerViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = FanctionItemBinding.inflate(inflater, parent, false)
+        val binding = ContorllerItemBinding.inflate(inflater, parent, false)
 
         return ControllerViewHolder(binding, presenter)
     }
@@ -26,12 +20,12 @@ class ControllersAdapter(private val presenter: MainPresenter) : RecyclerView.Ad
         presenter.onBindItemView(holder, position)
     }
 
-    class ControllerViewHolder(private val binding: FanctionItemBinding, private val presenter: MainPresenter) : RecyclerView.ViewHolder(binding.root), ItemView {
+    class ControllerViewHolder(private val binding: ContorllerItemBinding, private val presenter: MainPresenter) : RecyclerView.ViewHolder(binding.root), ItemView {
         override fun bindItem(controllerData: ControllerData) {
             with(binding) {
-                imageOfFunctionViewInRecycleView.setImageResource(controllerData.imageId)
-                nameOfFunctionViewInRecycleView.setText(controllerData.nameId)
-                imageOfFunctionViewInRecycleView.setOnClickListener {
+                imageOfControllersItem.setImageResource(controllerData.imageId)
+                nameOfControllersItem.setText(controllerData.nameId)
+                imageOfControllersItem.setOnClickListener {
                     presenter.onControllerSelected(controllerData)
                 }
             }

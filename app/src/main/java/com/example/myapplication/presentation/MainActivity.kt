@@ -89,16 +89,10 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     private fun bindFunctionAdapter() {
-        binding.functionsRecycleView.adapter = getControllersAdapter()
-        binding.functionsRecycleView.layoutManager = getHorizontalLinearLayoutManager()
+        binding.controllersRecycleView.adapter = ControllersAdapter(presenter)
+        binding.controllersRecycleView.layoutManager = getHorizontalLinearLayoutManager()
     }
 
-    private fun getControllersAdapter(): ControllersAdapter {
-        adapter = ControllersAdapter(presenter)
-
-        adapter.data = ControllersService().getControllers()
-        return adapter
-    }
 
     private fun getHorizontalLinearLayoutManager(): LinearLayoutManager {
         return LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
