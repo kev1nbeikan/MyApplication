@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.controllers
 
 import android.Manifest
 import android.bluetooth.BluetoothManager
@@ -6,6 +6,7 @@ import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
+import com.example.myapplication.R
 import com.example.myapplication.presentation.MainPresenterImpl
 
 
@@ -13,7 +14,7 @@ data class ControllerData(val imageId: Int, val nameId: Int, var isTurned: Boole
 
 class ControllersService {
 
-    private var controllers = mutableListOf<ControllerData>(
+    private var controllers = mutableListOf(
         ControllerData(
             imageId = R.mipmap.flashlight,
             nameId = R.string.flashLight,
@@ -43,7 +44,7 @@ abstract class Controller {
 
 
 class Bluetooth(context: Context) : Controller() {
-    private val context: Context;
+    private val context: Context
 
     private var isTurn = false
 
@@ -106,20 +107,20 @@ class Bluetooth(context: Context) : Controller() {
 
 class FlashLight(context: Context) : Controller() {
 
-    private val context: Context;
+    private val context: Context
 
     private var isTurn = false
 
     private val cameraManager: CameraManager =
-        context.getSystemService(Context.CAMERA_SERVICE) as CameraManager;
+        context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
-    private var cameraId = "";
+    private var cameraId = ""
 
     override val permissions: Array<String>
         get() = emptyArray()
 
     init {
-        this.context = context;
+        this.context = context
 
         getCameraId()
     }
@@ -130,7 +131,7 @@ class FlashLight(context: Context) : Controller() {
 
     private fun getCameraId() {
         try {
-            cameraId = cameraManager.cameraIdList[0];
+            cameraId = cameraManager.cameraIdList[0]
         } catch (exception: CameraAccessException) {
             exception.printStackTrace()
         }
@@ -156,7 +157,7 @@ class FlashLight(context: Context) : Controller() {
         try {
 
             cameraManager.setTorchMode(cameraId, false)
-            isTurn = false;
+            isTurn = false
             isSuccess = true
 
         } catch (exception: CameraAccessException) {
@@ -175,7 +176,7 @@ class FlashLight(context: Context) : Controller() {
 
         try {
             cameraManager.setTorchMode(cameraId, true)
-            isTurn = true;
+            isTurn = true
             isSuccess = true
 
         } catch (exception: CameraAccessException) {
