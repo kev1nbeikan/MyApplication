@@ -11,19 +11,17 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.*
 import com.example.myapplication.controllers.ControllerData
-import com.example.myapplication.controllers.ControllersService
 import com.example.myapplication.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity(), MainView {
 
-    private val presenter: MainPresenter by lazy { MainPresenterImpl(this, ) }
+    private val presenter: MainPresenter by lazy { MainPresenterImpl(this) }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var turnControllerButton: Button
     private lateinit var imageOfControllerView: ImageView
     private lateinit var nameOFControllerView: TextView
-    private lateinit var adapter: ControllersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -35,7 +35,7 @@ abstract class Controller {
 
     abstract val permissions: Array<String>
 
-    abstract fun getTurnStatus(): Boolean
+    abstract fun isTurn(): Boolean
     abstract fun turnOff(): Boolean
     abstract fun turnOn(): Boolean
     abstract fun isEnabled(): Boolean
@@ -43,10 +43,8 @@ abstract class Controller {
 }
 
 
-class Bluetooth(context: Context) : Controller() {
+class BluetoothDiscovery(context: Context) : Controller() {
     private val context: Context
-
-    private var isTurn = false
 
     private val bluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -63,26 +61,21 @@ class Bluetooth(context: Context) : Controller() {
         this.context = context
     }
 
-    override fun turnOn(): Boolean =
-        if (!isDiscovering()) {
-            startDiscovery()
-            isTurn = true
-            true
-        } else {
-            false
+    override fun turnOn(): Boolean {
+        if (!isTurn()) {
+            start()
         }
+        return true
+    }
 
-
-    override fun turnOff(): Boolean =
-        if (isDiscovering()) {
-            cancelDiscovery()
-            isTurn = false
-            true
-        } else {
-            false
+    override fun turnOff(): Boolean {
+        if (isTurn()) {
+            stop()
         }
+        return true
+    }
 
-    override fun getTurnStatus(): Boolean = isDiscovering()
+    override fun isTurn(): Boolean = bluetoothManager.adapter.isDiscovering
 
     override fun isEnabled(): Boolean {
         return bluetoothManager.adapter.isEnabled
@@ -92,15 +85,12 @@ class Bluetooth(context: Context) : Controller() {
         presenter.onEnabledBluetooth()
     }
 
-    private fun cancelDiscovery() {
+    private fun stop() {
         bluetoothManager.adapter.cancelDiscovery()
     }
 
-    private fun isDiscovering(): Boolean {
-        return bluetoothManager.adapter.isDiscovering
-    }
 
-    private fun startDiscovery() {
+    private fun start() {
         bluetoothManager.adapter.startDiscovery()
     }
 }
@@ -109,15 +99,14 @@ class FlashLight(context: Context) : Controller() {
 
     private val context: Context
 
-    private var isTurn = false
+    private var turnStatus = false
 
     private val cameraManager: CameraManager =
         context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
 
     private var cameraId = ""
 
-    override val permissions: Array<String>
-        get() = emptyArray()
+    override val permissions: Array<String> = emptyArray()
 
     init {
         this.context = context
@@ -125,8 +114,42 @@ class FlashLight(context: Context) : Controller() {
         getCameraId()
     }
 
-    override fun getTurnStatus(): Boolean {
-        return isTurn
+    override fun turnOff(): Boolean {
+
+        if (!isTurn()) return true
+
+        var isSuccess = false
+
+        try {
+            cameraManager.setTorchMode(cameraId, false)
+            turnStatus = false
+            isSuccess = true
+
+        } catch (exception: CameraAccessException) {
+            exception.printStackTrace()
+        }
+        return isSuccess
+    }
+
+    override fun turnOn(): Boolean {
+
+        if (isTurn()) return true
+
+        var isSuccess = false
+
+        try {
+            cameraManager.setTorchMode(cameraId, true)
+            turnStatus = true
+            isSuccess = true
+
+        } catch (exception: CameraAccessException) {
+            exception.printStackTrace()
+        }
+        return isSuccess
+    }
+
+    override fun isTurn(): Boolean {
+        return turnStatus
     }
 
     private fun getCameraId() {
@@ -139,50 +162,11 @@ class FlashLight(context: Context) : Controller() {
 
     override fun isEnabled(): Boolean {
         val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
-        return cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+        return cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true || cameraId == ""
     }
 
     override fun onUnEnabled(presenter: MainPresenterImpl) {
         presenter.onEnabledFlashLight()
-    }
-
-    override fun turnOff(): Boolean {
-
-        if (cameraId == "") return false
-        if (!isEnabled()) return false
-        if (!isTurn) return true
-
-        var isSuccess = false
-
-        try {
-
-            cameraManager.setTorchMode(cameraId, false)
-            isTurn = false
-            isSuccess = true
-
-        } catch (exception: CameraAccessException) {
-            exception.printStackTrace()
-        }
-        return isSuccess
-    }
-
-    override fun turnOn(): Boolean {
-
-        if (cameraId == "") return false
-        if (!isEnabled()) return false
-        if (isTurn) return true
-
-        var isSuccess = false
-
-        try {
-            cameraManager.setTorchMode(cameraId, true)
-            isTurn = true
-            isSuccess = true
-
-        } catch (exception: CameraAccessException) {
-            exception.printStackTrace()
-        }
-        return isSuccess
     }
 
 

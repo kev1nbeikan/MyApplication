@@ -7,7 +7,7 @@ import com.example.myapplication.controllers.*
 class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
     private val flashLight: FlashLight by lazy { FlashLight(mainView as Context) }
-    private val bluetooth: Bluetooth by lazy { Bluetooth(mainView as Context) }
+    private val bluetoothDiscovery: BluetoothDiscovery by lazy { BluetoothDiscovery(mainView as Context) }
 
 
     private lateinit var currentController: Controller
@@ -20,7 +20,7 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
 
     override fun onControllerSelected(controllerData: ControllerData) {
         setCurrentController(controllerData.nameId)
-        controllerData.isTurned = currentController.getTurnStatus()
+        controllerData.isTurned = currentController.isTurn()
         if (controllerData.isTurned) {
             mainView.changeTurnButtonLabelToOff()
         } else {
@@ -45,7 +45,7 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
     private fun setCurrentController(nameId: Int) {
         when (nameId) {
             R.string.flashLight -> currentController = flashLight
-            R.string.bluetooth -> currentController = bluetooth
+            R.string.bluetooth -> currentController = bluetoothDiscovery
         }
     }
 
@@ -63,7 +63,7 @@ class MainPresenterImpl(private val mainView: MainView) : MainPresenter {
         }
 
 
-        if (currentController.getTurnStatus()) {
+        if (currentController.isTurn()) {
             if (currentController.turnOff()) {
                 mainView.changeTurnButtonLabelToOn()
             }
